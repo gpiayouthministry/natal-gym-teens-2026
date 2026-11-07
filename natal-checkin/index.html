@@ -49,7 +49,13 @@
                 <p>Arahkan kamera ke QR Code peserta</p>
             </div>
 
-            <div class="scanner-card">
+            <div class="scanner-container">
+                <!-- Tambahkan dropdown ini di atas area scanner -->
+                <div style="margin-bottom: 10px;">
+                    <label for="camera-select" style="font-size: 14px; font-weight: bold;">Pilih Kamera:</label>
+                    <select id="camera-select" style="width: 100%; padding: 8px; margin-top: 5px; border-radius: 6px; border: 1px solid #ccc;"></select>
+                </div>
+
                 <div id="reader"></div>
             </div>
 

@@ -46,34 +46,64 @@ function resetResult() {
 }
 
 // ================= SCANNER =================
-// ================= SCANNER =================
+let currentCameraId = null;
+
 function startScanner() {
     if (scannerRunning) return;
     if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
     handlingScan = false;
 
-    // Meminta izin kamera secara eksplisit terlebih dahulu
+    const cameraSelect = document.getElementById("camera-select");
+
+    // Ambil semua daftar kamera yang tersedia di HP/Laptop
     Html5Qrcode.getCameras().then(devices => {
         if (devices && devices.length) {
-            // Pilih kamera belakang secara default jika ada (biasanya index terakhir atau berlabel back/rear)
-            let cameraId = devices[devices.length - 1].id;
-            
-            // Atau pakai facingMode environment
+            // Populate opsi ke dropdown <select>
+            cameraSelect.innerHTML = "";
+            devices.forEach((device, index) => {
+                const option = document.createElement("option");
+                option.value = device.id;
+                // Berikan label yang jelas (misal: Kamera Depan / Kamera Belakang)
+                option.text = device.label || `Kamera ${index + 1}`;
+                cameraSelect.appendChild(option);
+            });
+
+            // Tampilkan dropdown jika kamera lebih dari 1
+            cameraSelect.style.display = devices.length > 1 ? "block" : "none";
+
+            // Pilih kamera yang sedang aktif (default: kamera belakang / device terakhir)
+            if (!currentCameraId) {
+                currentCameraId = devices[devices.length - 1].id;
+            }
+            cameraSelect.value = currentCameraId;
+
+            // Jalankan scanner dengan kamera yang dipilih
             html5QrCode.start(
-                { deviceId: { exact: cameraId } },
+                currentCameraId,
                 { fps: 10, qrbox: { width: 220, height: 220 } },
                 onScanSuccess,
                 onScanError
             ).then(() => {
                 scannerRunning = true;
             }).catch(err => {
-                fallbackStartCamera();
+                console.error("Gagal start kamera:", err);
             });
+
+            // Event saat pengguna mengganti pilihan kamera di dropdown
+            cameraSelect.onchange = async () => {
+                if (scannerRunning) {
+                    await html5QrCode.stop();
+                    scannerRunning = false;
+                }
+                currentCameraId = cameraSelect.value;
+                startScanner(); // Restart scanner dengan kamera baru
+            };
+
         } else {
             fallbackStartCamera();
         }
     }).catch(err => {
-        console.warn("Gagal mendeteksi list kamera, mencoba mode default...", err);
+        console.warn("Gagal mengambil list kamera:", err);
         fallbackStartCamera();
     });
 }
@@ -316,3 +346,4 @@ function avatarUrl(nama) {
 }
 
 window.onload = () => showScreen('menu');
+window.showScreen = showScreen;
