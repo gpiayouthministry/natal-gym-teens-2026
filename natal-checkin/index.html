@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check-in Natal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="src/style.css">
+    <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- MENU UTAMA -->
+        <section id="screen-menu" class="screen">
+            <div class="header">
+                <span class="badge">Panitia Natal 2026</span>
+                <h1>Natal GYM Favor &amp; Teens Ministry</h1>
+                <p>Pilih menu di bawah ini</p>
+            </div>
+
+            <div class="menu-grid">
+                <button class="menu-card" onclick="showScreen('attendees')">
+                    <span class="menu-icon">🎉</span>
+                    <span class="menu-text">
+                        <b>Siapa yang Sudah Hadir</b>
+                        <small>Lihat daftar peserta yang sudah check-in</small>
+                    </span>
+                </button>
+
+                <button class="menu-card" onclick="showScreen('scan')">
+                    <span class="menu-icon">📷</span>
+                    <span class="menu-text">
+                        <b>Scan QR Check-in</b>
+                        <small>Buka kamera dan pindai barcode peserta</small>
+                    </span>
+                </button>
+            </div>
+        </section>
+
+        <!-- SCAN QR -->
+        <section id="screen-scan" class="screen hidden">
+            <button class="back-btn" onclick="showScreen('menu')">← Kembali ke menu</button>
+
+            <div class="header">
+                <span class="badge">Panitia Natal 2026</span>
+                <h1>Check-in Kehadiran</h1>
+                <p>Arahkan kamera ke QR Code peserta</p>
+            </div>
+
+            <div class="scanner-card">
+                <div id="reader"></div>
+            </div>
+
+            <div id="result-container" class="result-card hidden">
+                <div class="result-header">
+                    <span class="label">ID Rombongan Terdeteksi</span>
+                    <span id="scanned-id" class="id-badge">---</span>
+                </div>
+
+                <!-- KOTAK DAFTAR ANGGOTA ROMBONGAN -->
+                <div class="participant-box">
+                    <p class="group-title">Daftar Anggota Rombongan:</p>
+                    <div id="members-list-container">
+                        <!-- Akan diisi otomatis oleh JavaScript -->
+                    </div>
+                </div>
+
+                <button id="btn-confirm" onclick="confirmCheckIn()" class="btn btn-primary hidden">
+                    Simpan Perubahan Kehadiran
+                </button>
+                <button onclick="resetScanner()" class="btn btn-secondary">
+                    Scan QR Lainnya
+                </button>
+            </div>
+        </section>
+
+        <!-- DAFTAR HADIR -->
+        <section id="screen-attendees" class="screen hidden">
+            <button class="back-btn" onclick="showScreen('menu')">← Kembali ke menu</button>
+
+            <div class="party">
+                <div class="party-head">
+                    <div>
+                        <p class="party-sub">Sudah hadir</p>
+                        <h2><span id="attendee-count">0</span> orang</h2>
+                    </div>
+                    <span class="live-dot">● LIVE</span>
+                </div>
+
+                <input id="search-input" class="party-search" type="search"
+                       placeholder="Cari nama..." oninput="renderAttendees()">
+
+                <div id="empty-state" class="empty-state hidden">
+                    <div class="empty-emoji">👀</div>
+                    <h3>Ups, belum ada yang hadir</h3>
+                    <p>Tunggu sebentar, peserta akan muncul di sini saat check-in.</p>
+                </div>
+
+                <div id="attendee-grid" class="attendee-grid"></div>
+            </div>
+        </section>
+
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+</body>
+</html>
